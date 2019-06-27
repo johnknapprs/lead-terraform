@@ -30,6 +30,19 @@ resource "helm_release" "external_dns" {
   ]
 }
 
+## Reconfigure extneral-dns to use the istio gateway
+#resource "helm_release" "cert_manager_crds" {
+#  name    = "external-dns-istio"
+#  namespace = "${module.system_namespace.name}"
+#  chart   = ".${replace(path.module, path.root, "")}/helm/external-dns-istio"
+#  timeout = 600
+#  wait    = true
+#
+#  depends_on = [
+#    "kubernetes_cluster_role_binding.tiller_cluster_role_binding",
+#  ]
+#}
+
 resource "kubernetes_service_account" "external_dns_service_account" {
   metadata {
     name = "external-dns"
@@ -51,6 +64,11 @@ resource "kubernetes_cluster_role" "external_dns_role" {
     api_groups = ["extensions"]
     resources = ["ingresses"]
     verbs = ["get","list","watch"]
+  }
+  rule {
+    api_groups = [""]
+    resources = ["nodes"]
+    verbs = ["list"]
   }
   rule {
     api_groups = ["networking.istio.io"]

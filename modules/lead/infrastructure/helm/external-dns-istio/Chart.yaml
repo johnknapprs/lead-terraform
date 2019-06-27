@@ -1,0 +1,4 @@
+name: external-dns-istio
+version: v0.1.0
+appVersion: v0.1.0
+description: A Helm chart for configurating external-dns to use istio gateway source
