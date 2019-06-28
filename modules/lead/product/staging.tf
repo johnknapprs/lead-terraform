@@ -101,9 +101,9 @@ data "helm_repository" "flagger" {
     url  = "https://flagger.app"
 }
 resource "helm_release" "podinfo" {
-  provider   = "kubernetes.staging"
+  provider   = "helm.staging"
   repository = "${data.helm_repository.flagger.metadata.0.name}"
-  chart      = "podinfo"
+  chart      = "flagger/podinfo"
   namespace  = "${module.staging_namespace.name}"
   name       = "podinfo"
   timeout    = 600
