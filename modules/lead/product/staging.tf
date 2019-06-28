@@ -95,3 +95,41 @@ resource "kubernetes_role_binding" "jenkins_staging_rolebinding" {
     namespace = "${module.toolchain_namespace.name}"
   }
 }
+
+data "helm_repository" "flagger" {
+    name = "flagger"
+    url  = "https://flagger.app"
+}
+resource "helm_release" "podinfo" {
+  repository = "${data.helm_repository.flagger.metadata.0.name}"
+  chart      = "podinfo"
+  namespace = "${module.staging_namespace.name}"
+  name       = "podinfo"
+  timeout    = 600
+  wait       = true
+
+  set {
+    name = "backend"
+    value = "http://backend.test:9898/echo"
+  }
+
+  set {
+    name = "canary.enabled"
+    value = "true"
+  }
+
+  set {
+    name = "canary.istioIngress.enabled"
+    value = "true"
+  }
+
+  set {
+    name = "canary.istioIngress.gateway"
+    value = "istio-ingressgateway"
+  }
+
+  set {
+    name = "canary.istioIngress.host"
+    value = "podinfo.jon-test-staging.lead.sandbox.liatr.io"
+  }
+}
