@@ -98,12 +98,12 @@ resource "kubernetes_role_binding" "jenkins_staging_rolebinding" {
 
 data "helm_repository" "flagger" {
     name = "flagger"
-    url  = "https://flagger.app"
+    url  = "https://flagger.app/"
 }
 resource "helm_release" "podinfo" {
   provider   = "helm.staging"
-  repository = "${data.helm_repository.flagger.metadata.0.name}"
-  chart      = "flagger/podinfo"
+  repository = "${data.helm_repository.flagger.metadata.0.url}"
+  chart      = "podinfo"
   namespace  = "${module.staging_namespace.name}"
   name       = "podinfo"
   timeout    = 600
