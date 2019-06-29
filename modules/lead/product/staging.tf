@@ -100,12 +100,12 @@ data "helm_repository" "flagger" {
     name = "flagger"
     url  = "https://flagger.app/"
 }
+
 resource "helm_release" "podinfo" {
-  provider   = "helm.staging"
-  repository = "${data.helm_repository.flagger.metadata.0.url}"
+  repository = "${data.helm_repository.flagger.metadata.0.name}"
   chart      = "podinfo"
   namespace  = "${module.staging_namespace.name}"
-  name       = "podinfo"
+  name       = "frontend"
   timeout    = 600
   wait       = true
 
