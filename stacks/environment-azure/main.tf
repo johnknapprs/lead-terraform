@@ -1,26 +1,25 @@
 terraform {
-  backend "azurem" {}
+  backend "s3" {}
 }
 
-provider "azurem" {
-  version = "~> 1.28.0"
+provider "aws" {
+  version = ">= 1.47.0"
+  region  = "${var.region}"
 }
 
-provider "azuread" {
-  version = "~> 0.3.0"
+data "aws_eks_cluster" "cluster" {
+  name = "${module.eks.cluster_id}"
 }
 
-provider "random" {
-  version = "~> 2.1"
-}
-
-provider "template" {
-  version = "~> 2.1"
+data "aws_eks_cluster_auth" "cluster" {
+  name = "${data.aws_eks_cluster.cluster.name}"
 }
 
 provider "kubernetes" {
-  version                = "~> 1.7"
-  host                   = "test"
+  host = "${data.aws_eks_cluster.cluster.endpoint}"
+  cluster_ca_certificate = "${base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)}"
+  token                  = "${data.aws_eks_cluster_auth.cluster.token}"
+  load_config_file       = false
 }
 
 provider "helm" {
