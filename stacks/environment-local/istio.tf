@@ -20,12 +20,12 @@ resource "null_resource" "istio_init_delay" {
     }
     depends_on = ["helm_release.istio_init"]
 }
-module "istio_system" {
-  source             = "../../modules/common/istio"
-  namespace          = "istio-system"
-  crd_waiter         = "${null_resource.istio_init_delay.id}"
-  enable            = "${var.enable_istio}"
-  providers {
-    helm = "helm.system"
-  }
-}
+#module "istio_system" {
+#  source             = "../../modules/common/istio"
+#  namespace          = "istio-system"
+#  crd_waiter         = "${null_resource.istio_init_delay.id}"
+#  enable            = "${var.enable_istio}"
+#  providers {
+#    helm = "helm.system"
+#  }
+#}
