@@ -1,3 +1,8 @@
+resource "random_string" "sdm_db_password" {
+  length  = 10
+  special = false
+}
+
 provider "helm" {
   alias = "system"
 }
@@ -43,6 +48,11 @@ resource "helm_release" "operator_toolchain" {
   namespace  = var.namespace
   provider   = helm.toolchain
   depends_on = [helm_release.operator_toolchain_definition]
+
+  set_sensitive {
+    name  = "postgresql.postgresqlPassword"
+    value = random_string.sdm_db_password.result
+  }
 
   values = [data.template_file.operator_toolchain_values.rendered]
 }
